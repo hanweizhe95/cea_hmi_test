@@ -1,0 +1,243 @@
+syntax = "proto3";//标明proto版本
+package SRprotobuf;//包名
+
+import "proto_ap/base.proto";
+import "proto_ap/online_local_map_fusion.proto";
+
+message StripObstacle  // 未使用
+{
+    repeated float segment=1;  //position
+    int32 type=2;  //0-none 1-wall
+    Size3f size=3;  //size
+    int32 color=4;  //color: argb
+    int32 id=5;  //id
+    int32 attri=6;  //additional attributes
+}
+
+message ApPathPoint {  // 目前只用来画VPA激活后的实时规划轨迹，用base_point
+    float confidence = 1;  
+    Point3f base_point = 2;  
+    float theta = 3;
+    float kappa = 4;
+    float s = 5;
+    float left_width = 6;
+    float right_width = 7;
+    float dkappa = 8;
+    float ddkappa = 9;
+    float lane_width = 10;
+    uint32 link_id = 11;
+    FloorLevel floor_level = 12;
+    int32 hill_status = 13;
+}
+
+
+message ApLaneLineInfo {  // 未使用
+    int32 attri = 1;
+    repeated ApPathPoint path_points = 2;
+
+}
+
+
+enum ApObjectType {  // 动态目标物的类别，对应message SfbpDynamicObject -> uint32 type = 2
+    OBJ_TYPE_UNKNOWN = 0;
+    OBJ_TYPE_PERSON = 1;
+    OBJ_TYPE_ANIMAL = 2;
+    OBJ_TYPE_SEDAN = 3;
+    OBJ_TYPE_SUV = 4;
+    OBJ_TYPE_VAN = 5;
+    OBJ_TYPE_BICYCLE = 6;
+    OBJ_TYPE_TRICYCLE = 7;
+    OBJ_TYPE_MOTORCYCLE = 8;
+    OBJ_TYPE_TRUCK = 9;
+    OBJ_TYPE_BUS = 10;
+    OBJ_TYPE_PICKUP = 11;
+}
+
+
+enum ApSignalLight {  // 目标物的运动状态
+    SIGNAL_LIGHT_UNKNOWN = 0;  // moving
+    SIGNAL_LIGHT_LEFT = 1;
+    SIGNAL_LIGHT_RIGHT = 2;
+    SIGNAL_LIGHT_EMERGENCY = 3;
+    SIGNAL_LIGHT_OFF = 4;  // not moving
+}
+
+
+enum ApBrakeLight {  // 车的亮灯属性（模糊的概念，不区分任何灯）
+    BRAKE_LIGHT_UNKNOWN = 0;  // 亮灯，渲染的车辆目标物点亮前后大灯
+    BRAKE_LIGHT_ON = 1;
+    BRAKE_LIGHT_OFF = 2;  // 不亮灯
+}
+
+message ApDynaObject{  // 动态目标物，对应message SfbpDynamicObject 
+    uint32 id = 1;  // 目标物编号，对应 uint32 track_id = 1
+    Size3f size = 2;  // 目标物的尺寸， 对应 ObjectSize size=13
+    ApObjectType type = 3;  // 目标物类型，对应 uint32 type = 2;
+    Pose3f pose = 4;  // 目标物的姿态，其中的 theta 对应 float local_yaw = 9;
+    Point3f pt = 5;  // 目标物在自车坐标系下的坐标，对应 Point3f local_pose = 6;
+    int32 color = 6; // 目标物颜色，0:gray, 1:red，对应 uint32 color_status= 12;
+    ApSignalLight signal_light = 7;  // 目标物的运动状态，用来区分行人静止还是摆动，对应 message SfbpDynamicObject -> uint32 vru_info = 11 -> enum VRUAttribInd -> IS_MOVING
+    ApBrakeLight brake_light = 8;    // 车的亮灯属性（模糊的概念，不区分任何转向灯、刹车灯等），
+    bool is_in_blind_region = 9;  // 未使用
+    uint32 blind_region = 10;  // 未使用
+    bool is_static = 11;  // 未使用
+    bool is_straddling = 12;  // 未使用
+    bool is_light_on = 13;  // 未使用
+    repeated float local_linear_velocity = 14;
+    repeated float local_linear_acceleration = 15;
+}
+
+message ApTrajectoryDataType{  // VPA、APA规划轨迹线
+enum ApTrajType{
+    ApTraj_TYPE_UNKNOWN = 0;   // 没有轨迹
+    ApTraj_TYPE_B = 1;   // B过程规划面
+    ApTraj_TYPE_real_ap_plan = 2;  // D过程实时局部轨迹
+    ApTraj_TYPE_global = 3;   // D过程实时全局轨迹
+	ApTraj_TYPE_RTF_global = 4;   //RTF新增
+	ApTraj_TYPE_RTF_planning = 5;  //RTF新增
+}
+    int32 id = 1;  // 泊车轨迹ID
+    ApTrajType type = 2;  //对应上面的轨迹枚举
+    repeated ApPathPoint Trajectory = 3;  //轨迹点的坐标
+}
+
+message BDistancePercent{  // B过程入库动作百分比
+    float distance = 1;  // 仍需继续行驶的距离
+    float percent = 2;  // 百分比
+}
+message RTFStatusMsg {    
+    int32 rtf_st = 1;
+    int32 rtf_tips = 2;
+    int32 fail_reason = 3;
+    float total_distance = 4;
+    float remain_distance = 5;
+    float percent = 6;
+    Location start_location = 7;  //ready 时自车的位置
+}
+
+message ApEssentialMsg{  // 泊车关键信息
+    int32 xputips = 1;  // 自动泊车/记忆泊车tips 
+    int32 xpuAbnormal = 2;  //APA故障
+    int32 statusIndicate = 3;   //记忆泊车状态
+    int32 failReason = 4;   //记忆泊车进入失败原因 
+    int32 arrow = 5;   //记忆泊车激活后，卡片上提示前方转弯箭头方向
+    int32 voice = 6;   //遥控泊车状态（0为不可用，1为可用，在卡片上露出小手机图标）
+    float remainDistance = 7;  //D过程，和常用车位的距离 + 5m
+    BDistancePercent bdistancepercent = 8;  // B过程入库动作百分比
+    int32 parkState = 9;  //未使用
+    int32 globalTrajectoryIndex = 10;  //ap路径的index，当前位置在全局路径里的index
+    int32 mapPoseState = 11;  //定位状态，==2定位成功，大屏端请求地图和RL
+    int32 silentFavoriteState = 12;  // 暂停使用。==1、2静默地图学习状态弹窗确认常用车位，1是不是设为常用车位，2为更新车位
+    uint64 hdmapId = 13;  //所使用地图ID（包括全部地图类型）
+    int32 favoriteSlotReady = 14;  //未使用
+    int32 is_hdmap = 15;  //地图类型，0:自学，1:静默学习，2:手机分享，3:系统推荐，4:全场地图 
+    int32 trainingTips = 16;  // 学习过程的tips
+    int32 trainingst = 17;  //学习中的状态，0:不可学习，1:可学习，2:学习中，3:学习结束
+    repeated int32 trainingfail = 18;  // 学习失败的原因
+    int32 terminal_attr = 19;   //分享和推荐地图的终点附近信息（充电桩、电梯口、楼宇入口）
+    int32 terminal_floor = 20;  //分享和推荐地图的终点所在楼层信息，暂未使用
+    uint64 map_time = 21;  //地图的时间戳，转发给HDMAP，记录地图踩赞信息
+    int32 desktop_avl = 22;  //E38新增，表征桌面态可用的标志。0：不可用；1：可用
+    int32 enter_map = 23;    //E38新增，0：出停车场；1：进停车场
+	int32 easy_get_off = 24; //便利下车，0:无，居中; 1:左侧便利，偏右; 2:右侧便利，偏左
+	RTFStatusMsg rtf_status_msg = 25;  //RTF新增 状态信息
+    int32 coveredValid = 26; //0-默认值/检测中;1-遮挡交互可用;2-遮挡交互不可用
+}
+
+message ApNaviMsg{  //起点导航信息，未使用
+    int32 navi_state = 1;
+    int32 navi_tips = 2;
+    float dist_to_startpoint = 3;
+    float dist_to_feature = 4;
+    int32 hill_status = 5;
+}
+
+message TrainingSpdBump{  // 地图学习用的减速带
+    int32 flag = 1;  //是否有减速带（==1代表有减速带）
+    float x = 2;     //减速带中心点坐标
+    float y = 3;
+    float z = 4;
+    float theta = 5;  //减速带角度
+    float s = 6;  //里程
+}
+
+message SlotIdMapping{  //用于学习
+    int32 avmSlotId = 1;   //可泊车位和当前AVM车位，匹配车位ID
+    int32 parkSlotId = 2;  //可泊车位的ID
+}
+
+message Ap_StaticObjectPoint {  // 静态目标物端点（减速带两个端点，柱子polygon向量 （头1尾2 ，顺时针柱子内侧））
+    Point3f position = 1;  // 端点坐标
+    bool is_visible = 2;  // 未使用
+};
+enum AP_StaticObjectType {  // 静态目标物类型，对应 SfbpStaticObject -> uint32 type
+    kWheelStopper = 0;  // 车位挡块，没有输出
+    kPillar = 1;  // 柱子
+    kWall = 2;  // 墙，没有输出
+    kCurb = 3;  // 路沿，没有输出
+    kDoor = 4;   // 门，没有输出
+    kHydrantBox = 5;   // 消火箱，没有输出
+    kHydrant = 6;   // 消防栓，没有输出
+    kBollardPost = 7;  // 细防撞柱
+    kTrafficCone = 8;  // 锥桶
+    kSpeedBump = 9;    // 减速带，停止使用，放到online_local_map_fusion里roadMarking
+    kDrainage = 10;  // 没有输出
+    kEntrance = 11;  // 没有输出
+    kBarrierGate = 12;   // 闸机
+    kUnknown = 13;    // 原箭头，暂不使用。箭头使用onlineLocalMapMsg
+};
+
+/*
+enum Ap_ArrowType {  // 暂不使用，箭头请看onlineLocalMapMsg
+    STRAIGHT                       = 0;
+    LEFT_TURN                      = 1;
+    RIGHT_TURN                     = 2;
+    STRAIGHT_LEFT_TURN             = 3;
+    STRAIGHT_RIGHT_TURN            = 4;
+    STRAIGHT_LEFT_RIGHT_TURN       = 5;
+    LEFT_RIGHT_TURN                = 6;
+    LEFT_U_TURN                    = 7;
+    RIGHT_U_TURN                   = 8;
+    LEFT_TURN_U_TURN               = 9;
+    RIGHT_TURN_U_TURN              = 10;
+    UNKNOWN                        = 11;
+    MAX_NUM                        = 12;
+};
+*/
+
+message Ap_StaticObject {  // 静态目标物，对应SfbpStaticObject
+    uint32 id = 1;  // 静态物体ID
+    AP_StaticObjectType type = 2;  // 静态物体类型，对应 SfbpStaticObject -> unit32 type
+    bool is_with_hanging = 3;  // 暂未使用，是否有悬空物，0：否，1：是，
+    bool is_mature = 4;  // 暂未使用，标志位，为1下游才会用（部分）
+    bool is_passable = 5;  // 闸机收费杆开闭状态，0：闭，1：开
+    repeated float size = 6;        // 静态物体尺寸，length, width, height，对应SfbpStaticObject -> ObjectSize size
+    repeated double local_pose = 7; // 目标物在自车坐标系下的坐标，x, y, z, 对应SfbpStaticObject -> Point3f local_pose；目标物朝向，yaw，对应SfbpStaticObject -> float local_yaw
+    repeated Ap_StaticObjectPoint polygon = 8;  // 端点（减速带两个端点，
+												// 柱子polygon向量 （头1尾2 ，顺时针柱子内侧），
+    float confidence = 9;  // 原箭头类型，暂不使用，箭头请看onlineLocalMapMsg
+};
+
+message Wall {
+    uint32 id = 1;  // 墙面ID
+    repeated Point3f points = 2;  // 墙面形点
+};
+
+message ApDrivingData
+{
+    Location location = 1;  // 车身位置坐标
+    repeated Slot slot = 2;  // AP、APA过程的可泊车位（实时探测车位）
+    repeated StripObstacle obj = 3;  // 未使用
+    repeated ApLaneLineInfo lanelines = 4;  // 未使用
+    repeated int32 curFloor = 5;            // [curfloor, next floor]
+    repeated ApTrajectoryDataType Trajectory = 6;  // VPA、APA泊车轨迹蓝色的引导线
+    repeated ApDynaObject dynObj = 7;  // 动态目标
+    ApEssentialMsg essentialMsg = 8;  // 泊车实时状态
+    repeated Slot slotAvm = 9;  // 学习过程中实时探测到的AVM车位
+    repeated TrainingSpdBump spdBump = 10;  // 学习过程中探测到的减速带（IMU探测）
+    repeated SlotIdMapping slotIdMapping = 11;  // 学习过程中自动泊入时可泊车位和当前AVM车位匹配信息 ，只用到size，里面的两个slotId均未使用，待确认
+    repeated Ap_StaticObject ap_StaticObject = 12;  // 静态目标物
+    ApNaviMsg naviMsg = 13;  // 起点导航信息，暂停使用
+    SRprotobuf.OnlineLocalMapMsg online_local_map_msg = 14;  // 包括实时车道线和热力图，是泊车新增的元素，所以结构和名字取为和行车一致
+    repeated Wall wall = 15;  // 墙面
+}

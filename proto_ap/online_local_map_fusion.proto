@@ -1,0 +1,78 @@
+syntax = "proto3";  //标明proto版本
+
+import "proto_ap/base.proto";
+
+package SRprotobuf;  //包名
+
+// Lane line type，对应 message OnlineLocalMapMsg -> BoundaryObject boudary_object = 2 -> uint32 type = 2;
+enum LaneLineType {  // 车道线类型，除单实线和单虚线，其他均未使用
+    LINE_TYPE_UNKNOWN = 0;
+    LINE_TYPE_SINGLE_SOLID = 1;  // 单实线
+    LINE_TYPE_SINGLE_DASHED = 2;  // 单虚线
+    LINE_TYPE_SHORT_DASHED = 3;
+    LINE_TYPE_DOUBLE_SOLID = 4;
+    LINE_TYPE_DOUBLE_DASHED = 5;
+    LINE_TYPE_LEFT_SOLID_RIGHT_DASHED = 6;
+    LINE_TYPE_RIGHT_SOLID_LEFT_DASHED = 7;
+    LINE_TYPE_SHADED_AREA = 8;
+    LINE_TYPE_VIRTUAL = 9;
+    LINE_TYPE_INTERSECTION_VIRTUAL = 10;
+    LINE_TYPE_CURB = 11;
+    LINE_TYPE_UNCLOSED_ROAD = 12;
+    LINE_TYPE_BOLT = 13;
+    LINE_TYPE_DASHED_SLOW = 14;
+    LINE_TYPE_SOLID_SLOW = 15;
+    LINE_TYPE_OBSTACLE = 16;
+    LINE_TYPE_OTHERS = 17;
+}
+
+message FeaturePointSequence {  // 车道线形点，对应 message OnlineLocalMapMsg -> BoundaryObject boudary_object = 2 -> FeaturePointSequence feature_points = 4;
+    float x = 1;
+    float y = 2;
+    float z = 3;
+};
+
+message BoundaryObject {  // 车道线，对应 message OnlineLocalMapMsg {BoundaryObject boudary_object = 2;}
+    uint64   id = 1;  // 车道ID， 对应 message BoundaryObject {uint64 id = 1;}
+    uint32   type = 2;  // LaneLineType，对应 message OnlineLocalMapMsg -> BoundaryObject boudary_object = 2 -> uint32 type = 2;
+    uint32   color = 3; // BoundaryColor，目前默认白色，没有赋值。对应 message OnlineLocalMapMsg -> BoundaryObject boudary_object = 2 -> uint32 color = 3;
+    repeated FeaturePointSequence   feature_points = 4;  // 车道线形点，对应 message OnlineLocalMapMsg -> BoundaryObject boudary_object = 2 -> FeaturePointSequence feature_points = 4;
+};
+
+enum RoadMarkingType {  // 地面标识类型，目前只有箭头;后面的数字对应行车的枚举值
+    STRAIGHT                       = 0;  // 直行 2
+    LEFT_TURN                      = 1;  // 左转 3
+    RIGHT_TURN                     = 2;  // 右转 4
+    STRAIGHT_LEFT_TURN             = 3;  // 直行带左转 6
+    STRAIGHT_RIGHT_TURN            = 4;  // 直行带右转 7
+    STRAIGHT_LEFT_RIGHT_TURN       = 5;  // 直行带左右转 8
+    LEFT_RIGHT_TURN                = 6;  // 左右转 5
+    LEFT_U_TURN                    = 7;  // 左掉头 9
+    RIGHT_U_TURN                   = 8;  // 右掉头 119
+    LEFT_TURN_U_TURN               = 9;  // 左转带掉头 10
+    RIGHT_TURN_U_TURN              = 10;  // 右转带掉头 120
+    UNKNOWN                        = 11;  // 暂不使用
+	speed_bump                     = 44;  // 减速带
+};
+
+message RoadMarkingObject {  // 地面标识，目前有箭头和减速带，对应 message OnlineLocalMapMsg -> RoadMarkingObject
+    float id = 1;  // 箭头和减速带ID，对应 message OnlineLocalMapMsg -> RoadMarkingObject road_mark_object = 3 -> float id = 1;
+	// 地面标识类型，目前只有箭头和减速带，对应 message OnlineLocalMapMsg -> RoadMarkingObject road_mark_object = 3 -> uint32 rsm_type = 2;
+    uint32 rsm_type = 2; //RoadMarkingType  
+    repeated RoadMarkingPoint points = 3;  // 箭头和减速带矩形框四个顶点
+    uint32 stop_line_color = 4;  // 暂不使用
+};
+
+message RoadMarkingPoint {  // 箭头矩形框四个顶点的坐标的定义
+    float x = 1;
+    float y = 2;
+    float z = 3;
+    uint32 type = 4;
+};
+
+message OnlineLocalMapMsg {  // 泊车新增的元素实时车道线和热力图，所以结构和名字取为和行车一致
+    repeated BoundaryObject boudary_object = 1;  // 实时车道线
+	repeated RoadMarkingObject road_mark_object = 2;  //实时箭头，对应 message OnlineLocalMapMsg -> RoadMarkingObject road_mark_object = 3;
+    repeated int32 drivable_space_map = 3;  // 热力图的数组
+};
+

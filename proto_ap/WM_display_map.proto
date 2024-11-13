@@ -1,0 +1,259 @@
+syntax = "proto3";//标明proto版本
+
+import "proto_ap/WM_display_realtime.proto";
+import "proto_ap/base.proto";
+import "proto_ap/logic_map.proto";
+
+package venue_map_pb;//包名
+message venue_map
+{    
+	message Floor  // 暂未使用
+	{
+		int32 ID = 1;
+		int32 level = 2;
+		float height_upper = 3;
+		float height_lower = 4; 
+	}
+
+    message Waypoints_Type  // 暂未使用
+    {
+        int32 Index = 1;  //轨迹点编号
+        uint32 Maturity = 2;  //成熟度
+        float Locationx = 3;  //轨迹点坐标（ENU坐标系）
+        float Locationy = 4;
+        float Locationz = 5;
+        float Location_accuracy = 6;  //精度
+        float Heading = 7;  //航向角
+        float TempS = 8;  //里程计
+        sint32 Gear = 9;  //挡位
+        int32 Training_tag = 10;  //用户确认 0：未确认 1：确认
+    }
+
+    message Favorate_Type  // 常用车位信息
+    {
+        int32 Vehicle_ID = 1;
+        float Confidence = 2;
+        uint32 Maturity = 3;
+        uint32 VirtualSlot = 4;
+        uint32 ReversePk = 5;
+        uint32 ParallelPk = 6;
+        uint32 ForwardPk = 7;
+        int32 Favorslotconfirmed = 8;
+    }
+
+    message Updates_Type  // 暂未使用
+    {
+        int32 Vehicle_ID = 1;
+        int64 Time = 2;
+    }
+
+    message Slots_Type  // 车位信息
+    {
+        uint32 ID = 1;  // 车位ID
+        uint32 Link_ID = 2;   // 车位关联的link的ID
+        sint32 Shape = 3;  // 车位形状
+        uint32 Maturity = 4;  // 成熟度，暂未使用
+        float Confidence = 5;  // 置信度，暂未使用
+        float Locationx = 6;  // 中心点坐标
+        float Locationy = 7;
+        float Locationz = 8;
+        float Location_accuracy = 9;  // 精度，暂未使用
+        float NearFrontLoc_x = 10;  // E点，暂未使用
+        float NearFrontLoc_y = 11;
+        float NearFrontLoc_z = 12;
+        float NearRearLoc_x = 13;   // B点，暂未使用
+        float NearRearLoc_y = 14;
+        float NearRearLoc_z = 15;
+        int32 WayPoint_Index = 16;  // 车位中心关联的轨迹点的编号
+        float Heading = 17;   // 车位中心指向BE边的向量
+        float Width = 18;  // 开口宽度，暂未使用
+        float Length = 19;  // 开口深度，暂未使用
+        sint32 CDU_Type = 20;  //预留
+        Updates_Type Updates = 21;  //预留
+        Favorate_Type Favorate = 22;   //常用车位信息，用来画五角星
+        SRprotobuf.FloorLevel floor_level = 23;  //所在楼层 VPA模式用到
+    }
+
+    message Ultrasonic_obstacles_Type  // 暂未使用
+    {
+        uint32 ID = 1;
+        uint32 Link_ID = 2;
+        sint32 Type = 3;
+        uint32 Maturity = 4;
+        float Confidence = 5;
+        float LocationA_x = 6;
+        float LocationA_y = 7;
+        float LocationA_z = 8;
+        float LocationB_x = 9;
+        float LocationB_y = 10;
+        float LocationB_z = 11;
+        float Location_accuracy = 12;
+        int32 WayPoint_Index = 13;
+        float Heading = 14;
+        Updates_Type Updates = 15;
+    } 
+
+    message LastPostprocessing_Type  // 暂未使用
+    {
+        uint32 Maturity = 1;
+        int64 Time = 2;
+    }
+
+    message Venue_Type  // 记忆地图类型，暂未使用
+    {
+        uint32 ID = 1;  // 地图ID
+        sint32 Type = 2;  // 预留
+        double Orgin_location_lon = 3;  // ENU坐标系原点的GPS坐标，暂未使用
+        double Orgin_location_lat = 4;
+        double Orgin_location_alt = 5;
+        double Entrance_location_lon = 6;  // 停车入口的GPS坐标，暂未使用
+        double Entrance_location_lat = 7;
+        double Entrance_location_alt = 8;
+        uint32 Maturity = 9;  // 成熟度
+        Updates_Type Updates = 10;  // 预留
+        LastPostprocessing_Type LastPostprocessing = 11;  // 预留
+    }
+
+    message Link_IDs_Type  // 地图link，一般两个弯点之间组成一条link，暂未使用
+    {
+        uint32 Link_ID = 1;  // link ID
+        int32 WayPoint_index = 2;
+    }
+
+    message Turn_directions_Type  // 暂未使用
+    {
+        float TurnPoint_Location_x = 1;
+        float TurnPoint_Location_y = 2;
+        float TurnPoint_Location_z = 3;
+        float Direction = 4;
+        uint32 Maturity = 5;
+    }
+
+    message Lane_lines_Type  // 地图车道线，暂未使用
+    {
+        uint32 ID = 1;
+        uint32 Link_ID = 2;
+        sint32 Type = 3;
+        uint32 Maturity = 4;
+        float Confidence = 5;
+        float LocationA_x = 6;
+        float LocationA_y = 7;
+        float LocationA_z = 8;
+        float LocationB_x = 9;
+        float LocationB_y = 10;
+        float LocationB_z = 11;
+        float Location_accuracy = 12;
+        int32 WayPoint_Index = 13;
+        float Direction = 14;
+        Updates_Type Updates = 15;
+    };
+
+    message Links_Type  // links类型，暂未使用
+    {
+        repeated Waypoints_Type Waypoints = 1;
+        uint32 Joint_IDs_1 = 2;
+        uint32 Joint_IDs_2 = 3;
+        repeated uint32 Landmark_IDs = 4;
+        repeated uint32 Slot_IDs = 5;
+        repeated uint32 Obstacle_IDs = 6;
+        uint32 ID = 7;
+        float Direction = 8;
+        bool IsValid = 9;
+        repeated float floorlevel = 10;  //full map support
+    };
+
+    message Joints_Type  //拐点信息，暂未使用
+    {
+        uint32 ID = 1;
+        repeated Link_IDs_Type vLink_IDs = 2;
+        uint32 Maturity = 3;
+        float Confidence = 4;
+        float Location_x = 5;
+        float Location_y = 6;
+        float Location_z = 7;
+        float Location_accuracy = 8;
+        float Heading = 9;
+        Turn_directions_Type Turn_directions = 10;
+        Updates_Type Updates = 11;
+        uint32 IsUpdated = 12;
+        uint32 BreakType = 13;     
+    };
+
+    message Landmarks_Type  // 地图元素类型
+    {
+        uint32 ID = 1;  // 元素ID
+        uint32 Link_ID = 2;  //元素所在的link的ID
+        sint32 Type = 3;  // 元素类型，,1:减速带，2：上坡，-2：下坡、4：入口 5：闸机，7：柱子，8:墙，9：防撞柱(点)，10：箭头
+        uint32 Maturity = 4;  // 成熟度，暂未使用
+        float Confidence = 5;  // 可信度，暂未使用
+        float Location_x = 6;  //元素的坐标（中心点）
+        float Location_y = 7; 
+        float Location_z = 8;
+        float Location_accuracy = 9;  //精度，暂未使用
+        sint32 Direction_type = 10;  // 地图箭头类型
+                                     // 0:STRAIGHT, 1:LEFT_TURN, 2:RIGHT_TURN,
+                                     // 3:STRAIGHT_LEFT_TURN, 4:STRAIGHT_RIGHT_TURN, 
+                                     // 5:STRAIGHT_LEFT_RIGHT_TURN, 6:LEFT_RIGHT_TURN, 
+                                     // 7:LEFT_U_TURN, 8:RIGHT_U_TURN, 9:LEFT_TURN_U_TURN,
+                                     // 10:RIGHT_TURN_U_TURN, 11:UNKNOWN, 12:MAX_NUM
+        int32 WayPoint_Index = 11;   //元素关联的轨迹点的编号，暂未使用
+        float Heading = 12;   // 箭头的方向向量
+        Updates_Type Updates = 13;  // 预留
+        SRprotobuf.FloorLevel floor_level = 14;  //所在楼层，(-1，-1)代表-1层，(-1，-2)代表-1层和-2层之间的坡道
+        Location_type locationA = 15;  //  多个点的元素（如地图箭头）的头点，A是起点
+        Location_type locationB = 16;  //  多个点的元素（如地图箭头）的尾点，B是终点（默认用A，大于90小于180，大于270小于360用B）
+    };
+    message Location_type {
+        float x = 1;
+        float y = 2;
+        float z = 3;
+    };
+
+    message Pointwithid {  // 暂未使用
+        int32 id = 1;
+        float x = 2;
+        float y = 3;
+        float z = 4;
+    };
+
+    message Edge {  // 暂未使用
+        int32 id = 1;
+        int32 type = 2;                 // 0:不可通行 . 1:可通行
+        int32 subtype = 3;              //:子类型。int 。如墙壁
+        float direction = 4;            //:degree, % [0-360]
+        repeated int32 pts = 5;         //:[id1,id2,id3....],
+        int32 linkID = 6;               //: associated link id
+    };
+
+    message Connection {  // 暂未使用
+        int32 edge1 = 1;                        //edge id
+        int32 edge2 = 2;
+        int32 type = 3;                         // 1:单向  2:双向
+        repeated Location_type refline = 4;     //%参考的行驶轨迹点
+    };
+
+    message Intersection {  // 暂未使用
+        int32 id = 1;
+        repeated Pointwithid shapes = 2;
+        repeated Edge edges = 3;
+        repeated Connection connections = 4;
+    };
+
+    Venue_Type Venue = 1;  // // 暂未使用
+    repeated Links_Type vLinks = 2;  // 暂未使用
+    repeated Joints_Type vJoints = 3;  // 暂未使用
+    repeated Landmarks_Type vLandmarks = 4;  // 地图元素信息
+    repeated Slots_Type vSlots = 5;  // 车位信息
+    repeated Ultrasonic_obstacles_Type vObstacles_Ultrasonic = 6;  // 暂未使用
+    repeated Lane_lines_Type vLaneLines = 7; // 暂未使用
+	repeated Floor floors = 8;  // 暂未使用
+    repeated Intersection intersections = 9;  // 暂未使用
+    LogicMapPb.LogicMap logic_map = 10;  //全场地图逻辑图层（提供车道线，路口等数据）
+}
+
+message map_trajectory_data{  // VPA过程中所需的地图数据和道路数据，事件型
+    venue_map venueMap = 1;  // 地图信息
+    SRprotobuf.ApTrajectoryDataType apTrajectoryData = 2;  // VPA激活后显示的地面道路
+    uint32 timestamp = 3;  // 发送地图时刻点的时间戳，XPU调试用
+    int32 isAcrossFloors = 4;  //0:不跨楼层， 1:跨楼层
+}
