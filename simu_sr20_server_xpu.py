@@ -12,7 +12,6 @@ from someipy import TransportLayerProtocol
 from someipy.service import Method
 
 from sr20_msg import SDServiceMsg
-# from vehice_trace_replay import blist
 from serializedXP import blist
 
 

@@ -6,7 +6,6 @@ from WM_display_realtime_pb2 import ApDrivingData
 # from sd_overall_pb2 import SDOverallMsg
 from scapy.all import *
 import pyshark
-from Archive.vehice_trace_replay import blist
 
 # 读取转换后的 JSON 文件
 # with open('xpData.json', 'r') as f:
