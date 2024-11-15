@@ -10,22 +10,23 @@ from someipy.logging import set_someipy_log_level
 from someipy import TransportLayerProtocol
 from someipy.service import Method
 
-from serializedXP import blist
+from serialize_ap_sr_period_data import ap_sr_period_data
 
 
-# SD_MULTICAST_GROUP = "224.0.0.251" # offline mode
-SD_MULTICAST_GROUP = "239.127.3.1" # online mode
-SD_PORT = 30490
-# INTERFACE_IP = ("127.0.0.1") # simulated IP of ADAS ECU / offline mode
-INTERFACE_IP = ("172.20.1.22") # simulated IP of ADAS ECU / online mode
+# SOMEIP_SD_IP_ADDRESS = "224.0.0.251" # offline mode
+SOMEIP_SD_IP_ADDRESS = "239.127.3.1" # online mode
+SOMEIP_SD_PORT = 30490
+# XPU_SOC_M_IP_ADDR = ("127.0.0.1") # simulated IP of ADAS ECU / offline mode
+XPU_SOC_M_IP_ADDR = ("172.20.1.22")
+XPU_SOC_M_SERVER_PORT = 55117
+SR_SERVICE_INSTANCE_ID = 0x0001
+SR_SERVICE_SERVICE_ID = 0x4010
+SR_SERVICE_EVENT_GROUP_ID = 0x0001
+AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
 
-SDService_Service_ID = 0x4010 # SD Service ID
-SDServiceData_EVENTGROUP_ID = 0x0001 # SD event group
-SD_Period_Data_ID = 0x8002
-SDService_INSTANCE_ID = 0x0001 # SD Service instance ID for CDCU
     
 async def main():
-    global service_instance_SDService
+    global service_instance_SRService
     # It's possible to configure the logging level of the someipy library, e.g. logging.INFO, logging.DEBUG, logging.WARN, ..
     set_someipy_log_level(logging.DEBUG)
     
@@ -33,41 +34,40 @@ async def main():
     # use the construct_service_discovery function
     # The local interface IP address needs to be passed so that the src-address of all SD UDP packets is correctly set
     service_discovery = await construct_service_discovery(
-        SD_MULTICAST_GROUP, SD_PORT, INTERFACE_IP
+        SOMEIP_SD_IP_ADDRESS, SOMEIP_SD_PORT, XPU_SOC_M_IP_ADDR
     )
 
-    SDService_eventgroup = EventGroup(
-        id=SDServiceData_EVENTGROUP_ID, event_ids=[SD_Period_Data_ID]
+    SRService_eventgroup = EventGroup(
+        id = SR_SERVICE_EVENT_GROUP_ID,
+        event_ids = [AP_SR_PERIOD_DATA_ELEMENT_ID]
     )
 
-    SDService_service = (
+    SRService_service = (
         ServiceBuilder()
-        .with_service_id(SDService_Service_ID)
+        .with_service_id(SR_SERVICE_SERVICE_ID)
         .with_major_version(1)
-        .with_eventgroup(SDService_eventgroup)
+        .with_eventgroup(SRService_eventgroup)
         .build()
     )
 
     # For sending events use a ServerServiceInstance
-    service_instance_SDService = await construct_server_service_instance(
-        SDService_service,
-        instance_id=SDService_INSTANCE_ID,
-        endpoint=(
-            ipaddress.IPv4Address(INTERFACE_IP),
-            # 55118,
-            55117,
+    service_instance_SRService = await construct_server_service_instance(
+        SRService_service,
+        instance_id = SR_SERVICE_INSTANCE_ID,
+        endpoint = (
+            ipaddress.IPv4Address(XPU_SOC_M_IP_ADDR),
+            XPU_SOC_M_SERVER_PORT,
         ),  # src IP and port of the service
-        ttl=5,
-        sd_sender=service_discovery,
-        cyclic_offer_delay_ms=1000,
-        protocol=TransportLayerProtocol.TCP,
-        client_id=0x1016
-        # client_id=0x0000
+        ttl = 5,
+        sd_sender = service_discovery,
+        cyclic_offer_delay_ms = 1000,
+        protocol = TransportLayerProtocol.TCP,
+        client_id = 0x1016
     )
 
     # The service instance has to be attached always to the ServiceDiscoveryProtocol object, so that the service instance
     # is notified by the ServiceDiscoveryProtocol about e.g. subscriptions from other ECUs
-    service_discovery.attach(service_instance_SDService)
+    service_discovery.attach(service_instance_SRService)
 
     # ..it's also possible to construct another ServerServiceInstance and attach it to service_discovery as well
 
@@ -75,22 +75,22 @@ async def main():
     # start_offer method has to be called. This will start an internal timer, which will periodically send
     # Offer service entries with a period of "cyclic_offer_delay_ms" which has been passed above
     print("Start offering service..")
-    service_instance_SDService.start_offer()
+    service_instance_SRService.start_offer()
 
     try:
         while True:
             payload = b''
-            for payload in blist:
+            for payload in ap_sr_period_data:
                 # Either cyclically send events in an endless loop..
                 # await asyncio.Future()
                 await asyncio.sleep(0.5)
-                service_instance_SDService.send_event(
-                    SDServiceData_EVENTGROUP_ID, SD_Period_Data_ID, payload
+                service_instance_SRService.send_event(
+                    SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, payload
                 )
 
     except asyncio.CancelledError:
         print("Stop offering service..")
-        await service_instance_SDService.stop_offer()
+        await service_instance_SRService.stop_offer()
     finally:
         print("Service Discovery close..")
         service_discovery.close()

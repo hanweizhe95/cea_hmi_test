@@ -1,12 +1,11 @@
+sys.path.append("./proto_ap")
 import json
 import sys
-sys.path.append("./proto_ap")
 from google.protobuf import json_format
 from WM_display_realtime_pb2 import ApDrivingData
 import pyshark
 
 # 读取转换后的 JSON 文件
-# with open('xpData.json', 'r') as f:
 with open('output.json', 'r') as f:
     json_data = json.load(f)
 
@@ -101,14 +100,4 @@ if 'wall' in json_data:
 
 # 序列化 RootMessage 为二进制数据
 serialized_message = root_message.SerializeToString()
-blist = [serialized_message]
-print(blist)
-
-# packet = (Ether() /
-#           IP(dst= "172.20.1.45") /
-#           TCP(dport=12345, sport=54321, seq=1000, ack=1, flags="PA") /
-#           Raw(load=serialized_message))
-
-
-# wrpcap("output_data.pcap",[packet])
-# print("数据包已保存为.pcap文件")
+ap_sr_period_data = [serialized_message]
