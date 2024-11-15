@@ -3,3 +3,7 @@
 2. **output.json**: output of pcapToJson--> modify this file for signal value check.
 3. **serializedXP.py**: serialize json log to blist
 4. **simu_sr20_server_xpu.py**: replay pcap on CDCU
+
+## Preinstalled lib
+1. pyshark
+2. someipy
