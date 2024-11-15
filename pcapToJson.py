@@ -9,19 +9,15 @@ sys.path.append('./proto_ap')
   
 import WM_display_realtime_pb2
 
-recording_trace_path = r"./Logging018.pcapng"
-trace_file = pyshark.FileCapture(recording_trace_path, display_filter="someip.serviceid == 0x4010")
-print(trace_file)
+original_trace_file = r"./Logging018.pcapng"
+trace_file = pyshark.FileCapture(original_trace_file, display_filter='someip.serviceid == 0x4010 && someip.methodid == 0x8002')
+# print(trace_file[0])
 
-# trace_file = list(trace_file)
-
-blist = []
 with open("output.json", "w") as f:  
     for packet in trace_file:
         try:
             # 直接获取 SOME/IP 有效负载的二进制数据
             payload_data = packet.someip.payload.binary_value
-            blist.append(payload_data)
             # 使用 pb2 反序列化
             msg = WM_display_realtime_pb2.ApDrivingData()
             msg.ParseFromString(payload_data)

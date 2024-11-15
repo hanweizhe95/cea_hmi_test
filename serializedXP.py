@@ -3,8 +3,6 @@ import sys
 sys.path.append("./proto_ap")
 from google.protobuf import json_format
 from WM_display_realtime_pb2 import ApDrivingData
-# from sd_overall_pb2 import SDOverallMsg
-from scapy.all import *
 import pyshark
 
 # 读取转换后的 JSON 文件
@@ -104,6 +102,7 @@ if 'wall' in json_data:
 # 序列化 RootMessage 为二进制数据
 serialized_message = root_message.SerializeToString()
 blist = [serialized_message]
+print(blist)
 
 # packet = (Ether() /
 #           IP(dst= "172.20.1.45") /
