@@ -1,7 +1,6 @@
 import asyncio
 import ipaddress
 import logging
-from typing import Tuple
 
 from someipy import ServiceBuilder, EventGroup
 from someipy.service_discovery import construct_service_discovery
@@ -11,7 +10,6 @@ from someipy.logging import set_someipy_log_level
 from someipy import TransportLayerProtocol
 from someipy.service import Method
 
-from sr20_msg import SDServiceMsg
 from serializedXP import blist
 
 
@@ -25,7 +23,6 @@ SDService_Service_ID = 0x4010 # SD Service ID
 SDServiceData_EVENTGROUP_ID = 0x0001 # SD event group
 SD_Period_Data_ID = 0x8002
 SDService_INSTANCE_ID = 0x0001 # SD Service instance ID for CDCU
-# SDService_INSTANCE_ID = 0x0002 # SD Service instance ID for CDCU
     
 async def main():
     global service_instance_SDService
@@ -80,8 +77,6 @@ async def main():
     print("Start offering service..")
     service_instance_SDService.start_offer()
 
-    SD_msg = SDServiceMsg()
-
     try:
         while True:
             payload = b''
@@ -89,7 +84,6 @@ async def main():
                 # Either cyclically send events in an endless loop..
                 # await asyncio.Future()
                 await asyncio.sleep(0.5)
-                # SD_msg.timestamp = Uint64(SD_msg.timestamp.value + 1)
                 service_instance_SDService.send_event(
                     SDServiceData_EVENTGROUP_ID, SD_Period_Data_ID, payload
                 )
