@@ -38,12 +38,14 @@ if 'location' in json_data:
 # 解析 'slot' 字段
 if 'slot' in json_data:
     for slot_data in json_data['slot']:
-        slot = root_message.slot.add()  # 添加一个 Slot
+        slot = root_message.slot.add()
         json_format.ParseDict(slot_data, slot)
 
 # 解析 'curFloor' 字段
 if 'curFloor' in json_data:
-    root_message.curFloor.extend(json_data['curFloor'])
+    for curFloor_data in json_data['curFloor']:
+        curFloor = root_message.curFloor.add()
+        json_format.ParseDict(curFloor_data, curFloor)
 
 # 解析 'Trajectory' 字段
 if 'Trajectory' in json_data:
