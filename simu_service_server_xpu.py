@@ -19,16 +19,18 @@ SOMEIP_SD_IP_ADDRESS = "239.127.3.1" # online mode
 SOMEIP_SD_PORT = 30490
 # XPU_SOC_M_IP_ADDR = ("127.0.0.1") # simulated IP of ADAS ECU / offline mode
 XPU_SOC_M_IP_ADDR = ("172.20.1.22")
-XPU_SOC_M_SERVER_PORT = 55117
+
 
 # SR Service
 SR_SERVICE_INSTANCE_ID = 0x0001
+XPU_SOC_M_SR_SERVER_PORT = 55117
 SR_SERVICE_SERVICE_ID = 0x4010
 SR_SERVICE_EVENT_GROUP_ID = 0x0001
 AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
 
 # SD Service
 SD_SERVICE_INSTANCE_ID = 0x0001
+XPU_SOC_M_SD_SERVER_PORT = 55118
 SD_SERVICE_SERVICE_ID = 0x4011
 SD_SERVICE_EVENT_GROUP_ID = 0x0001
 SD_PERIOD_DATA_ELEMENT_ID = 0x8002
@@ -67,7 +69,7 @@ async def main():
         instance_id = SR_SERVICE_INSTANCE_ID,
         endpoint = (
             ipaddress.IPv4Address(XPU_SOC_M_IP_ADDR),
-            XPU_SOC_M_SERVER_PORT,
+            XPU_SOC_M_SR_SERVER_PORT,
         ),  # src IP and port of the service
         ttl = 5,
         sd_sender = service_discovery,
@@ -97,7 +99,7 @@ async def main():
         instance_id = SD_SERVICE_INSTANCE_ID,
         endpoint = (
             ipaddress.IPv4Address(XPU_SOC_M_IP_ADDR),
-            XPU_SOC_M_SERVER_PORT,
+            XPU_SOC_M_SD_SERVER_PORT,
         ),  # src IP and port of the service
         ttl = 5,
         sd_sender = service_discovery,
@@ -123,10 +125,10 @@ async def main():
         while True:
             await asyncio.sleep(0.5)
             service_instance_SRService.send_event(
-                SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, ap_sr_period_data.payload
+                SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, ap_sr_period_data
             )
             service_instance_SRService.send_event(
-                SD_SERVICE_EVENT_GROUP_ID, SD_PERIOD_DATA_ELEMENT_ID, sd_period_data.payload
+                SD_SERVICE_EVENT_GROUP_ID, SD_PERIOD_DATA_ELEMENT_ID, sd_period_data
             )           
             # payload = b''
             # for payload in ap_sr_period_data:

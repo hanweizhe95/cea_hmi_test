@@ -7,7 +7,7 @@ import pyshark
 
 # 读取转换后的 JSON 文件
 with open('ap_sr_period_data', 'r') as f:
-    json_data = json.load(f)
+    json_data = json.load(f)[0]
 
 # 创建 RootMessage 对象
 root_message = ApDrivingData()
