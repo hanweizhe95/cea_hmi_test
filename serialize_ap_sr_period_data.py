@@ -6,11 +6,10 @@ from WM_display_realtime_pb2 import ApDrivingData
 import pyshark
 
 # 读取转换后的 JSON 文件
-with open('output.json', 'r') as f:
+with open('ap_sr_period_data', 'r') as f:
     json_data = json.load(f)
 
 # 创建 RootMessage 对象
-# root_message = SDOverallMsg()
 root_message = ApDrivingData()
 
 #     Location location = 1;  // 车身位置坐标
@@ -101,5 +100,4 @@ if 'wall' in json_data:
         json_format.ParseDict(wall_data, wall)
 
 # 序列化 RootMessage 为二进制数据
-serialized_message = root_message.SerializeToString()
-ap_sr_period_data = [serialized_message]
+ap_sr_period_data = root_message.SerializeToString()
