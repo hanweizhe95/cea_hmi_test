@@ -1,9 +1,7 @@
 import json
-import sys
-sys.path.append("./sr2_0")
-from google.protobuf import json_format
-from sd_overall_pb2 import SDOverallMsg
 import pyshark
+from google.protobuf import json_format
+from sr2_0.sd_overall_pb2 import SDOverallMsg
 
 # 读取转换后的 JSON 文件
 with open('sd_period_data.json', 'r') as f:

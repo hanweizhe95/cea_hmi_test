@@ -1,22 +1,26 @@
 import pyshark
-import socket
 import time
 import sys
 import json
 
-from google.protobuf import json_format  # protobuf==4.25.1  
-sys.path.append('./proto_ap')    
-import WM_display_realtime_pb2
+from google.protobuf import json_format  # protobuf==4.25.1    
+from proto_ap.WM_display_realtime_pb2 import ApDrivingData
+from proto_ap.WM_display_map_pb2 import map_trajectory_data
 sys.path.append('./sr2_0')
 import sd_overall_pb2
 
 original_trace_file = r"./Logging018.pcapng"
 
-
+# SR Service
 SR_SERVICE_SERVICE_ID = 0x4010
+
 AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
 AP_SR_PERIOD_DATA_JSON = "ap_sr_period_data.json"
 
+AP_SR_EVENT_DATA_ELEMENT_ID = 0x8003
+AP_SR_EVENT_DATA_JSON = "ap_sr_event_data.json"
+
+# SD Service
 SD_SERVICE_SERVICE_ID = 0x4011
 SD_PERIOD_DATA_ELEMENT_ID = 0x8002
 SD_PERIOD_DATA_JSON = "sd_period_data.json"
@@ -53,8 +57,16 @@ pcapToJson(
     SR_SERVICE_SERVICE_ID,
     AP_SR_PERIOD_DATA_ELEMENT_ID, 
     AP_SR_PERIOD_DATA_JSON, 
-    WM_display_realtime_pb2.ApDrivingData()
+    ApDrivingData()
     )
+
+# pcapToJson(
+#     original_trace_file, 
+#     SR_SERVICE_SERVICE_ID,
+#     AP_SR_EVENT_DATA_ELEMENT_ID, 
+#     AP_SR_EVENT_DATA_JSON, 
+#     map_trajectory_data()
+#     )
 
 pcapToJson(
     original_trace_file,

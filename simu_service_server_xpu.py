@@ -10,8 +10,9 @@ from someipy.logging import set_someipy_log_level
 from someipy import TransportLayerProtocol
 from someipy.service import Method
 
-from serialize_ap_sr_period_data import ap_sr_period_data
-from serialize_sd_period_data import sd_period_data
+from serialization.serialize_ap_sr_period_data import ap_sr_period_data
+from serialization.serialize_ap_sr_event_data import ap_sr_event_data
+from serialization.serialize_sd_period_data import sd_period_data
 
 
 # SOMEIP_SD_IP_ADDRESS = "224.0.0.251" # offline mode
@@ -23,14 +24,15 @@ XPU_SOC_M_IP_ADDR = ("172.20.1.22")
 
 # SR Service
 SR_SERVICE_INSTANCE_ID = 0x0001
-XPU_SOC_M_SR_SERVER_PORT = 55117
+XPU_SOC_M_SR_SERVICE_SERVER_PORT = 55117
 SR_SERVICE_SERVICE_ID = 0x4010
 SR_SERVICE_EVENT_GROUP_ID = 0x0001
 AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
+AP_SR_EVENT_DATA_ELEMENT_ID = 0x8003
 
 # SD Service
 SD_SERVICE_INSTANCE_ID = 0x0001
-XPU_SOC_M_SD_SERVER_PORT = 55118
+XPU_SOC_M_SD_SERVICE_SERVER_PORT = 55118
 SD_SERVICE_SERVICE_ID = 0x4011
 SD_SERVICE_EVENT_GROUP_ID = 0x0001
 SD_PERIOD_DATA_ELEMENT_ID = 0x8002
@@ -69,7 +71,7 @@ async def main():
         instance_id = SR_SERVICE_INSTANCE_ID,
         endpoint = (
             ipaddress.IPv4Address(XPU_SOC_M_IP_ADDR),
-            XPU_SOC_M_SR_SERVER_PORT,
+            XPU_SOC_M_SR_SERVICE_SERVER_PORT,
         ),  # src IP and port of the service
         ttl = 5,
         sd_sender = service_discovery,
@@ -99,7 +101,7 @@ async def main():
         instance_id = SD_SERVICE_INSTANCE_ID,
         endpoint = (
             ipaddress.IPv4Address(XPU_SOC_M_IP_ADDR),
-            XPU_SOC_M_SD_SERVER_PORT,
+            XPU_SOC_M_SD_SERVICE_SERVER_PORT,
         ),  # src IP and port of the service
         ttl = 5,
         sd_sender = service_discovery,
@@ -122,6 +124,9 @@ async def main():
     service_instance_SDService.start_offer()
 
     try:
+        service_instance_SRService.send_event(
+                SR_SERVICE_EVENT_GROUP_ID, AP_SR_EVENT_DATA_ELEMENT_ID, ap_sr_event_data
+            )
         while True:
             await asyncio.sleep(0.5)
             service_instance_SRService.send_event(

@@ -1,12 +1,10 @@
-sys.path.append("./proto_ap")
 import json
-import sys
-from google.protobuf import json_format
-from WM_display_realtime_pb2 import ApDrivingData
 import pyshark
+from google.protobuf import json_format
+from proto_ap.WM_display_realtime_pb2 import ApDrivingData
 
 # 读取转换后的 JSON 文件
-with open('ap_sr_period_data', 'r') as f:
+with open('ap_sr_period_data.json', 'r') as f:
     json_data = json.load(f)[0]
 
 # 创建 RootMessage 对象
