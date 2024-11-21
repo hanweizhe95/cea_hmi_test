@@ -1,4 +1,6 @@
 __pycache__/
 proto_ap/__pycache__
 serialization/__pycache__
+parser/__pycache__
 proto_ap/*.proto
+trace/
