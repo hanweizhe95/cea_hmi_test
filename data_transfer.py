@@ -25,7 +25,6 @@ pcapToJsonOneFrame(
     AP_SR_PERIOD_DATA_ELEMENT_ID, 
     AP_SR_PERIOD_DATA_JSON, 
     ApDrivingData(),
-    1000
     )
 
 pcapToJsonOneFrame(

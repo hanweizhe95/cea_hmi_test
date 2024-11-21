@@ -54,7 +54,7 @@ async def main():
     ##########################################
     SRService_eventgroup = EventGroup(
         id = SR_SERVICE_EVENT_GROUP_ID,
-        event_ids = [AP_SR_PERIOD_DATA_ELEMENT_ID]
+        event_ids = [AP_SR_PERIOD_DATA_ELEMENT_ID, AP_SR_EVENT_DATA_ELEMENT_ID]
     )
 
     SRService_service = (

@@ -25,11 +25,11 @@ if 'apTrajectoryData' in json_data:
 
 # 解析 'timestamp' 字段
 if 'timestamp' in json_data:
-    json_format.ParseDict(json_data['timestamp'], root_message.timestamp)
+    root_message.timestamp = json_data['timestamp']
 
 # 解析 'isAcrossFloors' 字段
 if 'isAcrossFloors' in json_data:
-    json_format.ParseDict(json_data['isAcrossFloors'], root_message.isAcrossFloors)
+    root_message.isAcrossFloors = json_data['isAcrossFloors']
 
 # 序列化 RootMessage 为二进制数据
 ap_sr_event_data = root_message.SerializeToString()

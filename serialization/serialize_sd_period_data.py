@@ -1,6 +1,8 @@
 import json
 import pyshark
 from google.protobuf import json_format
+import sys
+sys.path.append('./sr2_0')
 from sr2_0.sd_overall_pb2 import SDOverallMsg
 
 # 读取转换后的 JSON 文件
