@@ -4,8 +4,11 @@ from proto_ap.WM_display_map_pb2 import map_trajectory_data
 import sys
 sys.path.append('./sr2_0')
 import sd_overall_pb2
+from utils.parse_config import traceFileDir
+from utils.parse_config import traceFile
 
-original_trace_file = r"trace/Logging_G6_2024-10-18_10-24-57_TPA.pcapng"
+original_trace_file = f"{traceFileDir}/{traceFile}"
+# original_trace_file = r"trace/Logging_G6_2024-10-18_10-24-57_TPA.pcapng"
 
 # SR Service
 SR_SERVICE_SERVICE_ID = 0x4010
