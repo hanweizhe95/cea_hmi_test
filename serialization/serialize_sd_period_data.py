@@ -1,13 +1,20 @@
 import json
+import os
 from google.protobuf import json_format
 import sys
 sys.path.append('./sr2_0')
 from sr2_0.sd_overall_pb2 import SDOverallMsg
 from utils.parse_config import outputDir
+from utils.parse_config import SD_PERIOD_DATA_JSON
 
 # 读取转换后的 JSON 文件
-with open(f'{outputDir}/sd_period_data.json', 'r') as f:
-    json_data = json.load(f)[0]
+if not os.path.exists(f'{outputDir}/{SD_PERIOD_DATA_JSON}'):
+    print(f"File {SD_PERIOD_DATA_JSON} not exists")
+elif os.path.getsize(f'{outputDir}/{SD_PERIOD_DATA_JSON}') < 3:
+    print(f"File {SD_PERIOD_DATA_JSON} is empty")
+else:
+    with open(f'{outputDir}/{SD_PERIOD_DATA_JSON}', 'r') as f:
+        json_data = json.load(f)[0]
 
 # 创建 RootMessage 对象
 root_message = SDOverallMsg()

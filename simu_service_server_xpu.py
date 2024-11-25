@@ -13,6 +13,9 @@ from serialization.serialize_ap_sr_event_data import ap_sr_event_data
 from serialization.serialize_sd_period_data import sd_period_data
 
 from utils.parse_config import onlineMode
+from utils.parse_config import sendApSrPeriodData
+from utils.parse_config import sendApSrEventData
+from utils.parse_config import sendSdPeriodData
 from utils.parse_config import SOMEIP_SD_IP_ADDRESS
 from utils.parse_config import SOMEIP_SD_PORT
 from utils.parse_config import XPU_SOC_M_IP_ADDR
@@ -118,26 +121,37 @@ async def main():
     service_instance_SRService.start_offer()
     service_instance_SDService.start_offer()
 
+    def sendSrEvent(eventGroupID, eventID, payload, send=1):
+        if send == 1:
+            service_instance_SRService.send_event(
+                    eventGroupID, eventID, payload
+                )
+        elif send == 0:
+            print("AP_SR_Event_Data sending is muted, switch on in config file if necessary")
+
+    def sendSdEvent(eventGroupID, eventID, payload, send=1):
+        if send == 1:
+            service_instance_SDService.send_event(
+                    eventGroupID, eventID, payload
+                )
+        elif send == 0:
+            print("AP_SR_Event_Data sending is muted, switch on in config file if necessary")
+
     try:
-        service_instance_SRService.send_event(
-                SR_SERVICE_EVENT_GROUP_ID, AP_SR_EVENT_DATA_ELEMENT_ID, ap_sr_event_data
+        sendSrEvent(
+            SR_SERVICE_EVENT_GROUP_ID, AP_SR_EVENT_DATA_ELEMENT_ID,
+            ap_sr_event_data, sendApSrEventData
             )
         while True:
             await asyncio.sleep(0.5)
-            service_instance_SRService.send_event(
-                SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, ap_sr_period_data
+            sendSrEvent(
+                SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID,
+                ap_sr_period_data, sendApSrPeriodData
             )
-            service_instance_SRService.send_event(
-                SD_SERVICE_EVENT_GROUP_ID, SD_PERIOD_DATA_ELEMENT_ID, sd_period_data
-            )           
-            # payload = b''
-            # for payload in ap_sr_period_data:
-            #     # Either cyclically send events in an endless loop..
-            #     # await asyncio.Future()
-            #     await asyncio.sleep(0.5)
-            #     service_instance_SRService.send_event(
-            #         SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, payload
-            #     )
+            sendSdEvent(
+                SD_SERVICE_EVENT_GROUP_ID, SD_PERIOD_DATA_ELEMENT_ID,
+                sd_period_data, sendSdPeriodData
+            )
 
     except asyncio.CancelledError:
         print("Stop offering service..")

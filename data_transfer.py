@@ -52,6 +52,7 @@ if pcapReadMode == 1:
         sd_overall_pb2.SDOverallMsg(),
         sdPeriodDataFrameNumber
         )
+
 elif pcapReadMode == 0:
     pcapToJson(
         original_trace_file, 
@@ -74,3 +75,6 @@ elif pcapReadMode == 0:
         f"{outputDir}/{SD_PERIOD_DATA_JSON}",
         sd_overall_pb2.SDOverallMsg()
         )
+
+else:
+    print("Invalid pcapReadMode")
