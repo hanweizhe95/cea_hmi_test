@@ -20,6 +20,10 @@ from utils.parse_config import pcapReadMode
 from utils.parse_config import apSrPeriodDataFrameNumber
 from utils.parse_config import apSrEventDataFrameNumber
 from utils.parse_config import sdPeriodDataFrameNumber
+import os
+
+if not os.path.exists(f'{outputDir}'):
+        os.mkdir(f'{outputDir}')
 
 original_trace_file = f"{traceFileDir}/{traceFile}"
 
