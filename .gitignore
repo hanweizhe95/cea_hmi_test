@@ -4,3 +4,4 @@ serialization/__pycache__
 parser/__pycache__
 proto_ap/*.proto
 trace/
+out/

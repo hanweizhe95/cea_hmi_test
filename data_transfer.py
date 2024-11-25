@@ -1,4 +1,5 @@
 from parser.pcapToJson import pcapToJsonOneFrame
+from parser.pcapToJson import pcapToJson
 from proto_ap.WM_display_realtime_pb2 import ApDrivingData
 from proto_ap.WM_display_map_pb2 import map_trajectory_data
 import sys
@@ -6,42 +7,66 @@ sys.path.append('./sr2_0')
 import sd_overall_pb2
 from utils.parse_config import traceFileDir
 from utils.parse_config import traceFile
+from utils.parse_config import SR_SERVICE_SERVICE_ID
+from utils.parse_config import AP_SR_PERIOD_DATA_ELEMENT_ID
+from utils.parse_config import AP_SR_PERIOD_DATA_JSON
+from utils.parse_config import AP_SR_EVENT_DATA_ELEMENT_ID
+from utils.parse_config import AP_SR_EVENT_DATA_JSON
+from utils.parse_config import SD_SERVICE_SERVICE_ID
+from utils.parse_config import SD_PERIOD_DATA_ELEMENT_ID
+from utils.parse_config import SD_PERIOD_DATA_JSON
+from utils.parse_config import outputDir
+from utils.parse_config import pcapReadMode
+from utils.parse_config import apSrPeriodDataFrameNumber
+from utils.parse_config import apSrEventDataFrameNumber
+from utils.parse_config import sdPeriodDataFrameNumber
 
 original_trace_file = f"{traceFileDir}/{traceFile}"
-# original_trace_file = r"trace/Logging_G6_2024-10-18_10-24-57_TPA.pcapng"
 
-# SR Service
-SR_SERVICE_SERVICE_ID = 0x4010
-AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
-AP_SR_PERIOD_DATA_JSON = "ap_sr_period_data.json"
-AP_SR_EVENT_DATA_ELEMENT_ID = 0x8003
-AP_SR_EVENT_DATA_JSON = "ap_sr_event_data.json"
-
-# SD Service
-SD_SERVICE_SERVICE_ID = 0x4011
-SD_PERIOD_DATA_ELEMENT_ID = 0x8002
-SD_PERIOD_DATA_JSON = "sd_period_data.json"
-
-pcapToJsonOneFrame(
-    original_trace_file, 
-    SR_SERVICE_SERVICE_ID,
-    AP_SR_PERIOD_DATA_ELEMENT_ID, 
-    AP_SR_PERIOD_DATA_JSON, 
-    ApDrivingData(),
-    )
-
-pcapToJsonOneFrame(
-    original_trace_file, 
-    SR_SERVICE_SERVICE_ID,
-    AP_SR_EVENT_DATA_ELEMENT_ID, 
-    AP_SR_EVENT_DATA_JSON, 
-    map_trajectory_data()
-    )
-
-pcapToJsonOneFrame(
-    original_trace_file,
-    SD_SERVICE_SERVICE_ID,
-    SD_PERIOD_DATA_ELEMENT_ID,
-    SD_PERIOD_DATA_JSON,
-    sd_overall_pb2.SDOverallMsg()
-    )
+if pcapReadMode == 1:
+    pcapToJsonOneFrame(
+        original_trace_file, 
+        SR_SERVICE_SERVICE_ID,
+        AP_SR_PERIOD_DATA_ELEMENT_ID, 
+        f"{outputDir}/{AP_SR_PERIOD_DATA_JSON}", 
+        ApDrivingData(),
+        apSrPeriodDataFrameNumber
+        )
+    pcapToJsonOneFrame(
+        original_trace_file, 
+        SR_SERVICE_SERVICE_ID,
+        AP_SR_EVENT_DATA_ELEMENT_ID, 
+        f"{outputDir}/{AP_SR_EVENT_DATA_JSON}", 
+        map_trajectory_data(),
+        apSrEventDataFrameNumber
+        )
+    pcapToJsonOneFrame(
+        original_trace_file,
+        SD_SERVICE_SERVICE_ID,
+        SD_PERIOD_DATA_ELEMENT_ID,
+        f"{outputDir}/{SD_PERIOD_DATA_JSON}",
+        sd_overall_pb2.SDOverallMsg(),
+        sdPeriodDataFrameNumber
+        )
+elif pcapReadMode == 0:
+    pcapToJson(
+        original_trace_file, 
+        SR_SERVICE_SERVICE_ID,
+        AP_SR_PERIOD_DATA_ELEMENT_ID, 
+        f"{outputDir}/{AP_SR_PERIOD_DATA_JSON}", 
+        ApDrivingData(),
+        )
+    pcapToJson(
+        original_trace_file, 
+        SR_SERVICE_SERVICE_ID,
+        AP_SR_EVENT_DATA_ELEMENT_ID, 
+        f"{outputDir}/{AP_SR_EVENT_DATA_JSON}", 
+        map_trajectory_data()
+        )
+    pcapToJson(
+        original_trace_file,
+        SD_SERVICE_SERVICE_ID,
+        SD_PERIOD_DATA_ELEMENT_ID,
+        f"{outputDir}/{SD_PERIOD_DATA_JSON}",
+        sd_overall_pb2.SDOverallMsg()
+        )

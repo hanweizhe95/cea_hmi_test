@@ -1,12 +1,12 @@
 import json
-import pyshark
 from google.protobuf import json_format
 import sys
 sys.path.append('./sr2_0')
 from sr2_0.sd_overall_pb2 import SDOverallMsg
+from utils.parse_config import outputDir
 
 # 读取转换后的 JSON 文件
-with open('sd_period_data.json', 'r') as f:
+with open(f'{outputDir}/sd_period_data.json', 'r') as f:
     json_data = json.load(f)[0]
 
 # 创建 RootMessage 对象

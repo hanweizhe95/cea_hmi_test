@@ -4,38 +4,33 @@ import logging
 
 from someipy import ServiceBuilder, EventGroup
 from someipy.service_discovery import construct_service_discovery
-from someipy.serialization import Uint8, Uint64, Float32, SomeIpPayload
 from someipy import construct_server_service_instance
 from someipy.logging import set_someipy_log_level
 from someipy import TransportLayerProtocol
-from someipy.service import Method
 
 from serialization.serialize_ap_sr_period_data import ap_sr_period_data
 from serialization.serialize_ap_sr_event_data import ap_sr_event_data
 from serialization.serialize_sd_period_data import sd_period_data
 
+from utils.parse_config import onlineMode
+from utils.parse_config import SOMEIP_SD_IP_ADDRESS
+from utils.parse_config import SOMEIP_SD_PORT
+from utils.parse_config import XPU_SOC_M_IP_ADDR
+from utils.parse_config import SR_SERVICE_INSTANCE_ID
+from utils.parse_config import XPU_SOC_M_SR_SERVICE_SERVER_PORT
+from utils.parse_config import SR_SERVICE_SERVICE_ID
+from utils.parse_config import SR_SERVICE_EVENT_GROUP_ID
+from utils.parse_config import AP_SR_PERIOD_DATA_ELEMENT_ID
+from utils.parse_config import AP_SR_EVENT_DATA_ELEMENT_ID
+from utils.parse_config import SD_SERVICE_INSTANCE_ID
+from utils.parse_config import XPU_SOC_M_SD_SERVICE_SERVER_PORT
+from utils.parse_config import SD_SERVICE_SERVICE_ID
+from utils.parse_config import SD_SERVICE_EVENT_GROUP_ID
+from utils.parse_config import SD_PERIOD_DATA_ELEMENT_ID
 
-# SOMEIP_SD_IP_ADDRESS = "224.0.0.251" # offline mode
-SOMEIP_SD_IP_ADDRESS = "239.127.3.1" # online mode
-SOMEIP_SD_PORT = 30490
-# XPU_SOC_M_IP_ADDR = ("127.0.0.1") # simulated IP of ADAS ECU / offline mode
-XPU_SOC_M_IP_ADDR = ("172.20.1.22")
-
-
-# SR Service
-SR_SERVICE_INSTANCE_ID = 0x0001
-XPU_SOC_M_SR_SERVICE_SERVER_PORT = 55117
-SR_SERVICE_SERVICE_ID = 0x4010
-SR_SERVICE_EVENT_GROUP_ID = 0x0001
-AP_SR_PERIOD_DATA_ELEMENT_ID = 0x8002
-AP_SR_EVENT_DATA_ELEMENT_ID = 0x8003
-
-# SD Service
-SD_SERVICE_INSTANCE_ID = 0x0001
-XPU_SOC_M_SD_SERVICE_SERVER_PORT = 55118
-SD_SERVICE_SERVICE_ID = 0x4011
-SD_SERVICE_EVENT_GROUP_ID = 0x0001
-SD_PERIOD_DATA_ELEMENT_ID = 0x8002
+if onlineMode == 0:
+    SOMEIP_SD_IP_ADDRESS = "224.0.0.251" # offline mode
+    XPU_SOC_M_IP_ADDR = ("127.0.0.1") # simulated IP of ADAS ECU / offline mode
     
 async def main():
     global service_instance_SRService

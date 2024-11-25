@@ -1,10 +1,12 @@
 import configparser
+import os
 
+dirname = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # Create a configparser object
 config = configparser.ConfigParser()
 
 # Read the .ini file
-config.read('config.ini')
+config.read(dirname + '/xconfig.ini')
 
 # Access values from the .ini file
 traceFileDir = config['Directory']['traceFileDir']
@@ -12,9 +14,9 @@ outputDir = config['Directory']['outputDir']
 
 traceFile = config['TraceFile']['traceFile']
 
-apSrPeriodData = config['JsonOutput']['apSrPeriodData']
-apSrEventData = config['JsonOutput']['apSrEventData']
-apSrPeriodData = config['JsonOutput']['apSrPeriodData']
+AP_SR_PERIOD_DATA_JSON = config['JsonOutput']['apSrPeriodData']
+AP_SR_EVENT_DATA_JSON = config['JsonOutput']['apSrEventData']
+SD_PERIOD_DATA_JSON = config['JsonOutput']['sdPeriodData']
 
 pcapReadMode = config['Setting'].getint('pcapReadMode', fallback=0)
 onlineMode = config['Setting'].getint('onlineMode', fallback=0)

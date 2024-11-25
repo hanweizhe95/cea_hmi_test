@@ -1,5 +1,4 @@
 import pyshark
-import time
 import json
 
 from google.protobuf import json_format  # protobuf==4.25.1    
