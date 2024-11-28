@@ -20,6 +20,9 @@ SD_PERIOD_DATA_JSON = config['JsonOutput']['sdPeriodData']
 
 pcapReadMode = config['Setting'].getint('pcapReadMode', fallback=0)
 onlineMode = config['Setting'].getint('onlineMode', fallback=0)
+parseApSrPeriodData = config['Setting'].getint('parseApSrPeriodData', fallback=0)
+parseApSrEventData = config['Setting'].getint('parseApSrEventData', fallback=0)
+parseSdPeriodData = config['Setting'].getint('parseSdPeriodData', fallback=0)
 sendApSrPeriodData = config['Setting'].getint('sendApSrPeriodData', fallback=0)
 sendApSrEventData = config['Setting'].getint('sendApSrEventData', fallback=0)
 sendSdPeriodData = config['Setting'].getint('sendSdPeriodData', fallback=0)

@@ -42,6 +42,15 @@
   + onlineMode
       + 0 : offline mode
       + 1 : online mode
+  + parseApSrPeriodData
+      + 0 : do not parse data
+      + 1 : parse data
+  + parseApSrEventData
+      + 0 : do not parse data
+      + 1 : parse data
+  + parseSdPeriodData
+      + 0 : do not parse data
+      + 1 : parse data
   + sendApSrPeriodData
       + 0 : mute data sending
       + 1 : unmute data sending

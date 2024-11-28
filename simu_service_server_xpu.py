@@ -127,7 +127,7 @@ async def main():
                     eventGroupID, eventID, payload
                 )
         elif send == 0:
-            print("AP_SR_Event_Data sending is muted, switch on in config file if necessary")
+            print(f"SR Service with eventID:{eventID} sending is muted, switch on in config file if necessary")
 
     def sendSdEvent(eventGroupID, eventID, payload, send=1):
         if send == 1:
@@ -135,7 +135,7 @@ async def main():
                     eventGroupID, eventID, payload
                 )
         elif send == 0:
-            print("AP_SR_Event_Data sending is muted, switch on in config file if necessary")
+            print(f"SD Service with eventID:{eventID} sending is muted, switch on in config file if necessary")
 
     try:
         sendSrEvent(
