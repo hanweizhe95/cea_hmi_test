@@ -19,6 +19,7 @@ def pcapToJsonWholeFile(pcapFile, serviceID, methodID, jsonFile, message):
                 continue  # 如果没有 payload，跳过
             except Exception as e:
                 print(f"Error parsing packet: {e}")
+        trace_file.close()
 
     with open(jsonFile,"r") as json_file:
         content = json_file.read().splitlines()
