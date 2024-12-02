@@ -33,35 +33,30 @@ def pcapToJsonWholeFile(pcapFile, serviceID, methodID, jsonFile, message):
 def pcapToJsonOneFrame(pcapFile, serviceID, methodID, jsonFile, message, frame = 0):
     print(f"Converting {pcapFile}... \nService id: {hex(serviceID)} \nMethod id: {hex(methodID)} ")
     trace_file = pyshark.FileCapture(pcapFile, display_filter=f'someip.serviceid == {serviceID} && someip.methodid == {methodID}')
-    with open(jsonFile, "w") as f:  
-        # 直接获取 SOME/IP 有效负载的二进制数据
-        frame_count = sum(1 for _ in trace_file)
-        print("Length of trace file:",frame_count)
-        if frame_count == 0:
-            print("No valid frame in the trace file.\n")
-            trace_file.close()
-        elif frame < 0:
-            print("Invalid frame number input!\n")
-            trace_file.close()
-        elif frame >= frame_count:
-            print("Please choose a frame number within trace file frame size.\n")
-            trace_file.close()
-        else:
-            payload_data = trace_file[frame].someip.payload.binary_value
-            # 使用 pb2 反序列化
-            message.ParseFromString(payload_data)
-            # 转换为 JSON 并输出
-            f.write(json_format.MessageToJson(message, indent=None) + "\n")  
+    
+    # 直接获取 SOME/IP 有效负载的二进制数据
+    frame_count = sum(1 for _ in trace_file)
+    print("Length of trace file:",frame_count)
+    if frame_count == 0:
+        print("No valid frame in the trace file.\n")
 
-            with open(jsonFile,"r") as json_file:
-                content = json_file.read().splitlines()
-                json_objects = [json.loads(line) for line in content]
+    elif frame < 0:
+        print("Invalid frame number input!\n")
 
-            with open(jsonFile,"w") as json_file:
-                json.dump(json_objects, json_file, indent = 4)
-            
-            print(f"已将第{frame}帧数据格式化\n")
-            trace_file.close()
+    elif frame >= frame_count:
+        print("Please choose a frame number within trace file frame size.\n")
+
+    else:
+        payload_data = trace_file[frame].someip.payload.binary_value
+        # 使用 pb2 反序列化
+        message.ParseFromString(payload_data)
+        # 转换为 JSON 并输出
+        with open(jsonFile, "w") as f:
+            f.write(json_format.MessageToJson(message, indent=4))
+        
+        print(f"已将第{frame}帧数据格式化\n")
+    
+    trace_file.close()
 
 def pcapToJson(pcapFile, serviceID, methodID, jsonFile, message, pcapReadMode, frame=0):
     if pcapReadMode == 1:

@@ -1,9 +1,7 @@
 from parser.pcapToJson import pcapToJson
 from proto_ap.WM_display_realtime_pb2 import ApDrivingData
 from proto_ap.WM_display_map_pb2 import map_trajectory_data
-import sys
-sys.path.append('./sr2_0')
-import sd_overall_pb2
+from sr_service.proto.sr2_0.sd_overall_pb2 import SDOverallMsg
 from utils.parse_config import traceFileDir
 from utils.parse_config import traceFile
 from utils.parse_config import SR_SERVICE_SERVICE_ID
@@ -61,7 +59,7 @@ if parseSdPeriodData:
         SD_SERVICE_SERVICE_ID,
         SD_PERIOD_DATA_ELEMENT_ID,
         f"{outputDir}/{SD_PERIOD_DATA_JSON}",
-        sd_overall_pb2.SDOverallMsg(),
+        SDOverallMsg(),
         pcapReadMode,
         sdPeriodDataFrameNumber
         )

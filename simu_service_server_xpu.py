@@ -153,6 +153,15 @@ async def main():
                 sd_period_data, sendSdPeriodData
             )
 
+            # payload = b''
+            # for payload in ap_sr_period_data:
+            #     # Either cyclically send events in an endless loop..
+            #     # await asyncio.Future()
+            #     await asyncio.sleep(0.5)
+            #     service_instance_SRService.send_event(
+            #         SR_SERVICE_EVENT_GROUP_ID, AP_SR_PERIOD_DATA_ELEMENT_ID, payload
+            #     )
+
     except asyncio.CancelledError:
         print("Stop offering service..")
         await service_instance_SRService.stop_offer()

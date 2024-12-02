@@ -1,5 +1,6 @@
 __pycache__/
 proto_ap/__pycache__
+sr_service/proto/sr2_0/__pycache__
 serialization/__pycache__
 parser/__pycache__
 proto_ap/*.proto

@@ -12,7 +12,7 @@ elif os.path.getsize(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}') < 3:
     print(f"File {AP_SR_PERIOD_DATA_JSON} is empty")
 else:
     with open(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}', 'r') as f:
-        json_data = json.load(f)[0]
+        json_data = json.load(f)
 
 # 创建 RootMessage 对象
 root_message = ApDrivingData()
