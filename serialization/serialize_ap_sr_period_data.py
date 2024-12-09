@@ -5,15 +5,6 @@ from proto_ap.WM_display_realtime_pb2 import ApDrivingData
 from utils.parse_config import outputDir
 from utils.parse_config import AP_SR_PERIOD_DATA_JSON
 
-# 读取转换后的 JSON 文件
-if not os.path.exists(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}'):
-    print(f"File {AP_SR_PERIOD_DATA_JSON} not exists")
-elif os.path.getsize(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}') < 3:
-    print(f"File {AP_SR_PERIOD_DATA_JSON} is empty")
-else:
-    with open(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}', 'r') as f:
-        json_data = json.load(f)
-
 # 创建 RootMessage 对象
 root_message = ApDrivingData()
 
@@ -33,76 +24,83 @@ root_message = ApDrivingData()
 #     SRprotobuf.OnlineLocalMapMsg online_local_map_msg = 14;  // 包括实时车道线和热力图，是泊车新增的元素，所以结构和名字取为和行车一致
 #     repeated Wall wall = 15;  // 墙面
 
-# print(type(json_data))
+# 读取转换后的 JSON 文件
+if not os.path.exists(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}'):
+    print(f"File {AP_SR_PERIOD_DATA_JSON} not exists")
+elif os.path.getsize(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}') < 3:
+    print(f"File {AP_SR_PERIOD_DATA_JSON} is empty")
+else:
+    with open(f'{outputDir}/{AP_SR_PERIOD_DATA_JSON}', 'r') as f:
+        json_data = json.load(f)
 
-# 解析 'location' 字段
-if 'location' in json_data:
-    json_format.ParseDict(json_data['location'], root_message.location)
+    # 解析 'location' 字段
+    if 'location' in json_data:
+        json_format.ParseDict(json_data['location'], root_message.location)
 
-# 解析 'slot' 字段
-if 'slot' in json_data:
-    for slot_data in json_data['slot']:
-        slot = root_message.slot.add()
-        json_format.ParseDict(slot_data, slot)
+    # 解析 'slot' 字段
+    if 'slot' in json_data:
+        for slot_data in json_data['slot']:
+            slot = root_message.slot.add()
+            json_format.ParseDict(slot_data, slot)
 
-# 解析 'curFloor' 字段
-if 'curFloor' in json_data:
-    for curFloor_data in json_data['curFloor']:
-        curFloor = root_message.curFloor.add()
-        json_format.ParseDict(curFloor_data, curFloor)
+    # 解析 'curFloor' 字段
+    if 'curFloor' in json_data:
+        for curFloor_data in json_data['curFloor']:
+            curFloor = root_message.curFloor.add()
+            json_format.ParseDict(curFloor_data, curFloor)
 
-# 解析 'Trajectory' 字段
-if 'Trajectory' in json_data:
-    for trajectory_data in json_data['Trajectory']:
-        trajectory = root_message.Trajectory.add()
-        json_format.ParseDict(trajectory_data, trajectory)
+    # 解析 'Trajectory' 字段
+    if 'Trajectory' in json_data:
+        for trajectory_data in json_data['Trajectory']:
+            trajectory = root_message.Trajectory.add()
+            json_format.ParseDict(trajectory_data, trajectory)
 
-# 解析 'dynObj' 字段
-# ApDynaObject dynObj
-if 'dynObj' in json_data:
-    for dyn_obj_data in json_data['dynObj']:
-        dyn_Obj = root_message.dynObj.add()
-        json_format.ParseDict(dyn_obj_data, dyn_Obj)
-# if 'dynObj' in json_data:
-#     json_format.ParseDict(json_data['dynObj'], root_message.dynObj)
+    # 解析 'dynObj' 字段
+    # ApDynaObject dynObj
+    if 'dynObj' in json_data:
+        for dyn_obj_data in json_data['dynObj']:
+            dyn_Obj = root_message.dynObj.add()
+            json_format.ParseDict(dyn_obj_data, dyn_Obj)
+    # if 'dynObj' in json_data:
+    #     json_format.ParseDict(json_data['dynObj'], root_message.dynObj)
 
-# 解析 'essentialMsg' 字段
-if 'essentialMsg' in json_data:
-    json_format.ParseDict(json_data['essentialMsg'], root_message.essentialMsg)
+    # 解析 'essentialMsg' 字段
+    if 'essentialMsg' in json_data:
+        json_format.ParseDict(json_data['essentialMsg'], root_message.essentialMsg)
 
-# 解析 'slotAvm' 字段
-if 'slotAvm' in json_data:
-    for slot_avm_data in json_data['slotAvm']:
-        slot_avm = root_message.slotAvm.add()
-        json_format.ParseDict(slot_avm_data, slot_avm)
+    # 解析 'slotAvm' 字段
+    if 'slotAvm' in json_data:
+        for slot_avm_data in json_data['slotAvm']:
+            slot_avm = root_message.slotAvm.add()
+            json_format.ParseDict(slot_avm_data, slot_avm)
 
-# 解析 'spdBump' 字段
-if 'spdBump' in json_data:
-    for spd_bump_data in json_data['spdBump']:
-        spd_bump = root_message.spdBump.add()
-        json_format.ParseDict(spd_bump_data, spd_bump)
+    # 解析 'spdBump' 字段
+    if 'spdBump' in json_data:
+        for spd_bump_data in json_data['spdBump']:
+            spd_bump = root_message.spdBump.add()
+            json_format.ParseDict(spd_bump_data, spd_bump)
 
-# 解析 'slotIdMapping' 字段
-if 'slotIdMapping' in json_data:
-    for slot_id_mapping_data in json_data['slotIdMapping']:
-        slot_id_mapping = root_message.slotIdMapping.add()
-        json_format.ParseDict(slot_id_mapping_data, slot_id_mapping)
+    # 解析 'slotIdMapping' 字段
+    if 'slotIdMapping' in json_data:
+        for slot_id_mapping_data in json_data['slotIdMapping']:
+            slot_id_mapping = root_message.slotIdMapping.add()
+            json_format.ParseDict(slot_id_mapping_data, slot_id_mapping)
 
-# 解析 'ap_StaticObject' 字段
-if 'apStaticObject' in json_data:
-    for static_obj_data in json_data['apStaticObject']:
-        static_obj = root_message.ap_StaticObject.add()
-        json_format.ParseDict(static_obj_data, static_obj)
+    # 解析 'ap_StaticObject' 字段
+    if 'apStaticObject' in json_data:
+        for static_obj_data in json_data['apStaticObject']:
+            static_obj = root_message.ap_StaticObject.add()
+            json_format.ParseDict(static_obj_data, static_obj)
 
-# 解析 'online_local_map_msg' 字段
-if 'onlineLocalMapMsg' in json_data:
-    json_format.ParseDict(json_data['onlineLocalMapMsg'], root_message.online_local_map_msg)
+    # 解析 'online_local_map_msg' 字段
+    if 'onlineLocalMapMsg' in json_data:
+        json_format.ParseDict(json_data['onlineLocalMapMsg'], root_message.online_local_map_msg)
 
-# 解析 'wall' 字段
-if 'wall' in json_data:
-    for wall_data in json_data['wall']:
-        wall = root_message.wall.add()
-        json_format.ParseDict(wall_data, wall)
+    # 解析 'wall' 字段
+    if 'wall' in json_data:
+        for wall_data in json_data['wall']:
+            wall = root_message.wall.add()
+            json_format.ParseDict(wall_data, wall)
 
 # 序列化 RootMessage 为二进制数据
 ap_sr_period_data = root_message.SerializeToString()
